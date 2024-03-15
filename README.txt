@@ -1,6 +1,7 @@
 Dynamis stats is a simplistic addon for Elder Scrolls Online™ that calculates and displays important stats on screen in real time.
 
-Currently displayed player stats and rationales:
+Currently displayed player stats and details:
+
 Weapon/Spell Damage
 Displays whichever higher as stats are interchangeable for all purpouses, can be different due to minor brutality/sorcery, depending on classes in group
 
@@ -42,7 +43,7 @@ Repaced with mount speed when player is mounted, calculated similairly
 -Major Gallop 30%, multiplicative
 -Gifted Raider CP 10%, multiplicative (additive with Major Gallop)
 Assumer global cap of 300% is unreachable
-This calculation does not account for ~20% additional speed burst that is gained for ~1s on sprint button press and is ment not to measure actual traversal speed but to display hidden game stats.
+This calculation does not account for ~20% additional speed burst that is gained for ~1s on sprint button press and is ment not to measure actual traversal speed but to display hidden game stats
 
 Planned fixes and features
 1. Change format of capped values (CHD, non-mounted MS) to dispaly value over cap (e.g. red 125%+6%)
@@ -53,6 +54,9 @@ Planned fixes and features
 6. Improve calculation of divines trait of Steed mundus to account for non-gold items (currently adds flat 1% for every detected divines item beyond the first)
 7. If possible, move sprint event from SHIFT press to better detection method or to be configurable
 8. Add support for different levels of included CP stars (possibly not needed, but not the most extreme edge case)
-9. Change functions and methods to reduce unnecessary calls and updates.
-10. Refarctor functions and calls to improve code quality.
+9. Change functions and methods to reduce unnecessary calls and updates
+10. Improve visual design
+11. Add settings for turning stat lines on and off
+12. Add automatic pvp mode on battle spirit aquisition, that will remove cap information from penetration and armor, as well as calculate player penetration debuffs
+13. Refarctor functions and calls to improve code quality.
 
