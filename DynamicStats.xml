@@ -1,7 +1,7 @@
 <GuiXml>
     <Controls>
         <TopLevelControl name="DynamicStats_UI" mouseEnabled="true" movable="true" hidden="false">
-            <Dimensions x="120" y="162" />
+            <Dimensions x="150" y="132" />
             <Anchor point="TOPLEFT" relativeTo="GuiRoot" relativePoint="CENTER" offsetX="0" offsetY="0"/>
             <Controls>
                 <Backdrop name="$(parent)_Background" centerColor="000000" edgeColor="000000" alpha="0.7">
@@ -9,35 +9,29 @@
                     <AnchorFill />
                     <Edge edgeSize="1" />
                 </Backdrop>
-                <Label name="$(parent)_WD" font="esoui/common/fonts/Univers67.otf|22|shadow" text="test">
+                <Label name="$(parent)_DMG" font="esoui/common/fonts/Univers67.otf|22|shadow" text="test">
                     <Anchor point="TOP" offsetY="10" />
                 </Label>
-                <Label name="$(parent)_WDDESC" font="esoui/common/fonts/Univers67.otf|10|shadow" text="DAMAGE" color="82b8e0" alpha="0.8">
+                <Label name="$(parent)_DMGDESC" font="esoui/common/fonts/Univers67.otf|10|shadow" text="DAMAGE/PENETRATION" color="82b8e0" alpha="0.8">
                     <Anchor point="TOP"  offsetY="2" />
                 </Label>
                 <Label name="$(parent)_CRIT" font="esoui/common/fonts/Univers67.otf|22|shadow" text="test">
                     <Anchor point="TOP" offsetY="41" />
                 </Label>
-                <Label name="$(parent)_CRITDESC" font="esoui/common/fonts/Univers67.otf|10|shadow" text="CRITICAL" color="82b8e0" alpha="0.8">
+                <Label name="$(parent)_CRITDESC" font="esoui/common/fonts/Univers67.otf|10|shadow" text="CRITICAL P/S/DMG" color="82b8e0" alpha="0.8">
                     <Anchor point="TOP" offsetY="33" />
                 </Label>
                 <Label name="$(parent)_RES" font="esoui/common/fonts/Univers67.otf|22|shadow" text="test">
                     <Anchor point="TOP" offsetY="72" />
                 </Label>
-                <Label name="$(parent)_RESDESC" font="esoui/common/fonts/Univers67.otf|10|shadow" text="RESISTANCE" color="82b8e0" alpha="0.8">
+                <Label name="$(parent)_RESDESC" font="esoui/common/fonts/Univers67.otf|10|shadow" text="RESISTANCE P/S" color="82b8e0" alpha="0.8">
                     <Anchor point="TOP" offsetY="64" />
                 </Label>
-                <Label name="$(parent)_PEN" font="esoui/common/fonts/Univers67.otf|22|shadow" text="test">
+                <Label name="$(parent)_SPEED" font="esoui/common/fonts/Univers67.otf|22|shadow" text="test">
                     <Anchor point="TOP" offsetY="103" />
                 </Label>
-                <Label name="$(parent)_PENDESC" font="esoui/common/fonts/Univers67.otf|10|shadow" text="PENETRATION" color="82b8e0" alpha="0.8">
-                    <Anchor point="TOP" offsetY="95" />
-                </Label>
-                <Label name="$(parent)_SPEED" font="esoui/common/fonts/Univers67.otf|22|shadow" text="test">
-                    <Anchor point="TOP" offsetY="134" />
-                </Label>
                 <Label name="$(parent)_SPEEDDESC" font="esoui/common/fonts/Univers67.otf|10|shadow" text="MOVESPEED" color="82b8e0" alpha="0.8">
-                    <Anchor point="TOP" offsetY="126" />
+                    <Anchor point="TOP" offsetY="95" />
                 </Label>
             </Controls>
             <OnMoveStop>

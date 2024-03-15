@@ -2,12 +2,17 @@ local addoncodename = 'DynamicStats'
 local isPlayerInCombat = false
 local SteedCP = false
 local WildHuntOn = false
+local forceOfNature = false
 local sv
 local critDamage = 0
 local cpCritMod = 0
 local cpSpeedMod = 0
 local buffSpeedMod = 0
 local sprintSpeedMod = 0
+local mountsprintSpeedMod = 0
+local mountTraining = 0
+local mountMultiplier = 1
+local mountMultiplierCP = 0
 local wildhuntSpeed = 0
 local swiftSpeed = 0
 local steedSpeed = 0
@@ -38,16 +43,30 @@ local targetDebuffs = {
 local targetDebuffsPen = {
     [61743] = 5948, -- Major Breach
     [61742] = 2974, -- Minor Breach
-    [120018] = 6000, -- Alkosh
+    [76667] = 4000, -- Alkosh
+    [120018] = 6000, -- Alkosh dummy
     [143808] = 1000, -- Crystal Weapon
-    [113546] = 2200, -- Runic Sunder
-    [120007] = 2108, -- Crusher gold
-    [107895] = 3541, -- Crimson oath
-    [99746] = 2400, -- Tremorscale
+    [187742] = 2200, -- Runic Sunder
+    [120007] = 2108, -- Crusher dummy
+    [17906] = 2108, -- Crusher gold
+    [159288] = 3541, -- Crimson oath
+    [80866] = 2640, -- Tremorscale
 }
+local targetDebuffsFoN = {
+	[178118] = 660, -- Magic (Overcharged) not working
+	[18084]  = 660, -- Fire (Burning)
+	[95136]  = 660, -- Frost (Chill)
+	[95134]  = 660, -- Lightning (Concussion)
+	[178123] = 660, -- Physical (Sundered) not working
+	[21929]  = 660, -- Poison (Burning)
+	[178127] = 660, -- Foulness (Diseased) not working
+	[148801] = 660, -- Bleeding (Hemorrhaging)
+  }
 local playerBuffs = {
     61746, -- Minor Force
     61747, -- Major Force
+    61735, -- Minor Expedition
+    61736, -- Major Expedition
     79909, -- Minor Enervation
     127192, -- Senche's Bite
     154737, -- Sul-Xan Soulbound
@@ -64,16 +83,23 @@ local function DynamicStats_UpdateUI()
     local spellPower = GetPlayerStat(STAT_SPELL_POWER, STAT_BONUS_OPTION_APPLY_BONUS)
     local weaponDamage = zo_max(weaponPower, spellPower)
     local critChance = GetPlayerStat(STAT_CRITICAL_STRIKE, STAT_BONUS_OPTION_APPLY_BONUS) / ccoef
+    local critChanceS = GetPlayerStat(STAT_SPELL_CRITICAL, STAT_BONUS_OPTION_APPLY_BONUS) / ccoef
     local physicalResistance = GetPlayerStat(STAT_PHYSICAL_RESIST, STAT_BONUS_OPTION_APPLY_BONUS)
     local spellResistance = GetPlayerStat(STAT_SPELL_RESIST, STAT_BONUS_OPTION_APPLY_BONUS)
-    local physicalPenetration = GetPlayerStat(STAT_PHYSICAL_PENETRATION) + debuffPenMod
+    local armorPenetration = GetPlayerStat(STAT_PHYSICAL_PENETRATION) + debuffPenMod
     local movementSpeed = 100 + cpSpeedMod + buffSpeedMod + sprintSpeedMod + wildhuntSpeed + swiftSpeed + steedSpeed
-    local mountedSpeed = 135
+    local mountedSpeed = (115 + mountTraining + mountsprintSpeedMod) * (mountMultiplier + mountMultiplierCP)
+    local playerMounted = IsMounted()
     if isPlayerInCombat == true and SteedCP == true then 
       movementSpeed = movementSpeed - 20
     end
     if isPlayerInCombat == true and WildHuntOn == true then 
       movementSpeed = movementSpeed - 30
+    end
+    if armorPenetration > 18200 then
+      PENCAP = "FFDC00"
+    else
+      PENCAP = "FFFFFF"
     end
     if totalCritDamage > 125 then
       CRITCAP = "FF0000"
@@ -95,16 +121,14 @@ local function DynamicStats_UpdateUI()
     else
       MSCAP = "FFFFFF"
     end
-    DynamicStats_UI_WD:SetText(string.format("%d", weaponDamage))
-    DynamicStats_UI_CRIT:SetText(string.format("%d%% | |c%s%d%%", critChance, CRITCAP, totalCritDamage))
-    DynamicStats_UI_RES:SetText(string.format("|c%s%d | |c%s%d",PRCAP, physicalResistance, SRCAP, spellResistance))
-    DynamicStats_UI_PEN:SetText(string.format("%d", physicalPenetration))
-    DynamicStats_UI_SPEED:SetText(string.format("|c%s%d%%", MSCAP, movementSpeed))
-    if physicalPenetration > 18200 then
-      DynamicStats_UI_PEN:SetColor(255, 220, 0)
-    else 
-      DynamicStats_UI_PEN:SetColor(255, 255, 255)
-      end
+    DynamicStats_UI_DMG:SetText(string.format("%d | |c%s%d", weaponDamage, PENCAP, armorPenetration))
+    DynamicStats_UI_CRIT:SetText(string.format("%d%% | %d%% | |c%s%d%%", critChance, critChanceS, CRITCAP, totalCritDamage))
+    DynamicStats_UI_RES:SetText(string.format("|c%s%d | |c%s%d", PRCAP, physicalResistance, SRCAP, spellResistance))
+    if playerMounted then
+      DynamicStats_UI_SPEED:SetText(string.format("%d%%", mountedSpeed))
+      else
+      DynamicStats_UI_SPEED:SetText(string.format("|c%s%d%%", MSCAP, movementSpeed))
+    end
 end
 
 local function OnStatsUpdated(eventCode, ...)
@@ -112,18 +136,31 @@ local function OnStatsUpdated(eventCode, ...)
     if currentTimecrit - lastCallTime >= cooldown then
     _, _, critDamage = GetAdvancedStatValue(ADVANCED_STAT_DISPLAY_TYPE_CRITICAL_DAMAGE)
     buffSpeedMod = 0
+    mountMultiplier = 1
     for i = 1, GetNumBuffs('player') do
       local _, _, _, _, _, _, _, _, _, _, abilityIdS = GetUnitBuffInfo('player', i)
       if playerBuffsSpeed[abilityIdS] then
          buffSpeedMod = buffSpeedMod + playerBuffsSpeed[abilityIdS]
       end
+      if abilityIdS == 63569 then
+          mountMultiplier = mountMultiplier + 0.3
+      end
+      for j = 2, 14 do -- munduesStones length
+        if abilityIdS == 13977 then
+          steedSpeed = 10 + divinesSteed
+        end
+      end
     end
     if IsShiftKeyDown() then
       _, _, sprintSpeedMod = GetAdvancedStatValue(ADVANCED_STAT_DISPLAY_TYPE_SPRINT_SPEED)
       sprintSpeedMod = sprintSpeedMod - 100
+      mountsprintSpeedMod = 30
     end
     local shiftNotPressed = not IsShiftKeyDown()
-    if shiftNotPressed then sprintSpeedMod = 0 end
+    if shiftNotPressed then 
+      sprintSpeedMod = 0
+      mountsprintSpeedMod = 0
+    end
     local wildHuntName = 'Ring of the Wild Hunt'
     local divines = 0
     local divinesSteed = 0
@@ -147,14 +184,6 @@ local function OnStatsUpdated(eventCode, ...)
     if divines > 0 then
     divinesSteed = divines - 1 end
     steedSpeed = 0
-    for i = 1, GetNumBuffs('player') do
-      local _, _, _, _, _, _, _, _, _, _, abilityIdM = GetUnitBuffInfo('player', i)
-      for j = 2, 14 do -- munduesStones length
-        if abilityIdM == 13977 then
-          steedSpeed = 10 + divinesSteed
-        end
-      end
-    end
     DynamicStats_UpdateUI()
     lastCallTime = currentTimecrit
     end
@@ -165,13 +194,17 @@ local function GetTargetDebuffs(...)
     if currentTime - lastCallTime >= cooldown and DoesUnitExist('reticleover') and not IsUnitPlayer('reticleover') then
         debuffCritMod = 0
         debuffPenMod = 0
-        for i = 1, GetNumBuffs('reticleover') do
+        local numBuffs = GetNumBuffs('reticleover')
+        for i = 1, numBuffs do
             local _, _, _, _, _, _, _, _, _, _, abilityId = GetUnitBuffInfo('reticleover', i)
             if targetDebuffs[abilityId] then
                 debuffCritMod = debuffCritMod + targetDebuffs[abilityId]
             end
             if targetDebuffsPen[abilityId] then 
                 debuffPenMod = debuffPenMod + targetDebuffsPen[abilityId]
+            end
+            if targetDebuffsFoN[abilityId] and forceOfNature == true then
+              debuffPenMod = debuffPenMod + targetDebuffsFoN[abilityId]
             end
         end
         DynamicStats_UpdateUI()
@@ -184,21 +217,35 @@ local function OnCPChanged(eventCode, result)
         cpCritMod = 0
         cpSpeedMod = 0
         SteedCP = false
+        mountMultiplierCP = 0
+        forceOfNature = false
         for disciplineIndex = 0, 12 do
             local championSkillId = GetSlotBoundId(disciplineIndex, HOTBAR_CATEGORY_CHAMPION)
             -- Backstabber
-            if championSkillId == 31 then cpCritMod = cpCritMod + 15 end
-            -- Steed's blessing
+            if championSkillId == 31 then
+              cpCritMod = cpCritMod + 10
+            end
+            -- Steed's Blessing
             if championSkillId == 66 then 
               cpSpeedMod = cpSpeedMod + 20
               SteedCP = true
             end
+            -- Gifted Raider
+            if championSkillId == 92 then
+              mountMultiplierCP = 0.1
+            end
             -- Celerity
-            if championSkillId == 270 then cpSpeedMod = cpSpeedMod + 10 end
+            if championSkillId == 270 then
+              cpSpeedMod = cpSpeedMod + 10 
+            end
+            if championSkillId == 276 then
+              forceOfNature = true
+            end
         end
         if playerRace == 'Wood Elf' then 
           cpSpeedMod = cpSpeedMod + 5 
         end
+        _, _, _, _, mountTraining, _ = GetRidingStats()
         DynamicStats_UpdateUI()
     end
 end

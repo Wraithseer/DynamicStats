@@ -3,7 +3,7 @@
 ## Author: Wraithseer
 ## Title: Dynamic Stats
 ## SavedVariables: DynamicStatsSV
-## Version: 1.0.1
+## Version: 1.0.2
 
 # This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates.
 # The Elder Scrolls® and related logos are registered trademarks or trademarks of
