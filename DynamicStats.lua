@@ -114,6 +114,7 @@ end
 
 local function OnStatsUpdated(eventCode, ...)
   local currentTimecrit = GetGameTimeMilliseconds()
+  local divinesSteed = 0
   if currentTimecrit - lastCallTime >= cooldown then
     _, _, critDamage = GetAdvancedStatValue(ADVANCED_STAT_DISPLAY_TYPE_CRITICAL_DAMAGE)
     buffSpeedMod = 0
@@ -144,7 +145,7 @@ local function OnStatsUpdated(eventCode, ...)
     end
     local wildHuntName = 'Ring of the Wild Hunt'
     local divines = 0
-    local divinesSteed = 0
+
     swiftSpeed = 0
     WildHuntOn = false
     wildhuntSpeed = 0
