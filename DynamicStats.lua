@@ -33,27 +33,33 @@ local defaults = {
   y = 300
 }
 
-
-local playerBuffs = { 61746, -- Minor Force
-  61747,                    -- Major Force
-  61735,                    -- Minor Expedition
-  61736,                    -- Major Expedition
-  79909,                    -- Minor Enervation
-  127192,                   -- Senche's Bite
-  154737,                   -- Sul-Xan Soulbound
-  155150,                   -- Harpooner's Wading Kilt
-  194875                    -- Fated Fortune
+local playerBuffs = {
+  61746,  -- Minor Force
+  61747,  -- Major Force
+  61735,  -- Minor Expedition
+  61736,  -- Major Expedition
+  79909,  -- Minor Enervation
+  127192, -- Senche's Bite
+  154737, -- Sul-Xan Soulbound
+  155150, -- Harpooner's Wading Kilt
+  194875  -- Fated Fortune
 }
 local playerBuffsSpeed = {
-  [61735] = 15,   -- Minor Expedition
-  [61736] = 30    -- Major Expedition
+  [61735] = 15, -- Minor Expedition
+  [61736] = 30  -- Major Expedition
 }
-
 local current_target = nil
 local target_cache = {}
 
 local function DynamicStats_UpdateUI()
-  local totalCritDamage = 50 + critDamage + cpCritMod + debuffCritMod
+  local added_crit = 0
+  local added_pen = 0
+  if current_target then 
+      added_crit = current_target.added_crit
+      added_pen = current_target.added_penetration
+  end
+
+  local totalCritDamage = 50 + critDamage + cpCritMod + added_crit
   local weaponPower = GetPlayerStat(STAT_POWER, STAT_BONUS_OPTION_APPLY_BONUS)
   local spellPower = GetPlayerStat(STAT_SPELL_POWER, STAT_BONUS_OPTION_APPLY_BONUS)
   local weaponDamage = zo_max(weaponPower, spellPower)
@@ -61,7 +67,7 @@ local function DynamicStats_UpdateUI()
   local critChanceS = GetPlayerStat(STAT_SPELL_CRITICAL, STAT_BONUS_OPTION_APPLY_BONUS) / ccoef
   local physicalResistance = GetPlayerStat(STAT_PHYSICAL_RESIST, STAT_BONUS_OPTION_APPLY_BONUS)
   local spellResistance = GetPlayerStat(STAT_SPELL_RESIST, STAT_BONUS_OPTION_APPLY_BONUS)
-  local armorPenetration = GetPlayerStat(STAT_PHYSICAL_PENETRATION) + debuffPenMod
+  local armorPenetration = GetPlayerStat(STAT_PHYSICAL_PENETRATION) + added_pen
   local movementSpeed = 100 + cpSpeedMod + buffSpeedMod + sprintSpeedMod + wildhuntSpeed + swiftSpeed + steedSpeed
   local mountedSpeed = (115 + mountTraining + mountsprintSpeedMod) * (mountMultiplier + mountMultiplierCP)
   local playerMounted = IsMounted()
@@ -179,10 +185,6 @@ local function OnReticleChange(...)
     target_cache[unitName] = current_target
   end
 
-  if #target_cache = 10 then
-    table.remove(target_cache, 1)
-  end
-
   DynamicStats_UpdateUI()
 end
 
@@ -190,11 +192,13 @@ end
 local function OnCombatEvent(_, result, isError, abilityName, _, _, sourceName, _, targetName, targetType, hitValue,
                              powerType, damageType, _, sourceUnitId, targetUnitId, abilityId)                  
   if not current_target then return end
-  if targetName ~= current_target then return end
+  if targetName ~= current_target.name then return end
   if not DoesUnitExist('reticleover') or IsUnitPlayer('reticleover') then return end
-  if not result == ACTION_RESULT_EFFECT_GAINED or not result == ACTION_RESULT_EFFECT_DURATION then return end
-  current_target.update()
+  if not ACTION_RESULT_EFFECT_GAINED == result or ACTION_RESULT_EFFECT_DURATION == result then return end
+  current_target:update()
   DynamicStats_UpdateUI()
+
+  EVENT_MANAGER:RegisterForUpdate(addoncodename, current_target.oldest_buff_time - GetGameTimeMilliseconds() / 1000 , DynamicStats_UpdateUI)
 end
 
 local function OnCPChanged(eventCode, result)
@@ -238,12 +242,12 @@ end
 
 local function OnCombatStateChanged(eventCode, inCombat)
   DynamicStats_UpdateUI()
-  DynamicStats_UI:SetHidden(not inCombat)
+ -- DynamicStats_UI:SetHidden(not inCombat)
 end
 
 local function OnPlayerActivated(eventCode, initial)
   DynamicStats_UpdateUI()
-  DynamicStats_UI:SetHidden(true)
+  --DynamicStats_UI:SetHidden(true)
 end
 
 function DynamicStatsOnMoveStop()

@@ -36,9 +36,6 @@
                     <Anchor point="TOP" offsetY="103" />
                 </Label>
 
-                <Label name="$(parent)_DEBUG" font="esoui/common/fonts/Univers67.otf|22|shadow" text="test">
-                    <Anchor point="TOP" offsetY="125" />
-                </Label>
             </Controls>
             <OnMoveStop>
                 DynamicStatsOnMoveStop()
