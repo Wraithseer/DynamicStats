@@ -1,7 +1,7 @@
 <GuiXml>
     <Controls>
         <TopLevelControl name="DynamicStats_UI" mouseEnabled="true" movable="true" hidden="false">
-            <Dimensions x="150" y="132" />
+            <Dimensions x="150" y="350" />
             <Anchor point="TOPLEFT" relativeTo="GuiRoot" relativePoint="CENTER" offsetX="0" offsetY="0"/>
             <Controls>
                 <Backdrop name="$(parent)_Background" centerColor="000000" edgeColor="000000" alpha="0.7">
@@ -27,11 +27,17 @@
                 <Label name="$(parent)_RESDESC" font="esoui/common/fonts/Univers67.otf|10|shadow" text="RESISTANCE P/S" color="82b8e0" alpha="0.8">
                     <Anchor point="TOP" offsetY="64" />
                 </Label>
+       
+                <Label name="$(parent)_SPEEDDESC" font="esoui/common/fonts/Univers67.otf|10|shadow" text="MOVESPEED" color="82b8e0" alpha="0.8">
+                    <Anchor point="TOP" offsetY="95" />
+                </Label>
+
                 <Label name="$(parent)_SPEED" font="esoui/common/fonts/Univers67.otf|22|shadow" text="test">
                     <Anchor point="TOP" offsetY="103" />
                 </Label>
-                <Label name="$(parent)_SPEEDDESC" font="esoui/common/fonts/Univers67.otf|10|shadow" text="MOVESPEED" color="82b8e0" alpha="0.8">
-                    <Anchor point="TOP" offsetY="95" />
+
+                <Label name="$(parent)_DEBUG" font="esoui/common/fonts/Univers67.otf|22|shadow" text="test">
+                    <Anchor point="TOP" offsetY="125" />
                 </Label>
             </Controls>
             <OnMoveStop>
