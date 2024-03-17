@@ -73,7 +73,6 @@ function Target:update()
             self.added_crit = self.added_crit + (debuffs.force_of_nature[abilityId])
         end
     end
-
 end
 
 

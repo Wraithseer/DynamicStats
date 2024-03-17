@@ -3,7 +3,6 @@ local addoncodename = 'DynamicStats'
 local isPlayerInCombat = false
 local SteedCP = false
 local WildHuntOn = false
-local forceOfNature = false
 local sv
 local critDamage = 0
 local cpCritMod = 0
@@ -198,7 +197,6 @@ local function OnCombatEvent(_, result, isError, abilityName, _, _, sourceName, 
   current_target:update()
   DynamicStats_UpdateUI()
 
-  EVENT_MANAGER:RegisterForUpdate(addoncodename, current_target.oldest_buff_time - GetGameTimeMilliseconds() / 1000 , DynamicStats_UpdateUI)
 end
 
 local function OnCPChanged(eventCode, result)
