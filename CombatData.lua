@@ -1,3 +1,179 @@
+local BASE_CRITICAL_DAMAGE = 50
+local BASE_MOVEMENT_SPEED = 100
+local BASE_MOUNTED_SPEED = 115
+
+Gear = {}
+Gear.__index = Gear
+
+function Gear:new(slot,name, trait, quality, is_crusher_enchant)
+
+  Gear.SLOTS = {
+    Head = 0,
+    Neck = 1,
+    Chest = 2,
+    Shoulders = 3,
+    MainHand = 4,
+    OffHand = 5,
+    Waist = 6,
+    Legs = 7,
+    Feet = 8,
+    RingLeft = 9,
+    RingRight = 10,
+    Hand = 11,
+    Costume = 12,
+    CostumeHead = 13,
+    Backpack = 14,
+    CostumeUpperBody = 15,
+    CostumeLowerBody = 16,
+    CostumeHand = 17,
+    CostumeFeet = 18
+}
+    local instance = {
+        slot = slot,
+        trait = trait,
+        quality = quality,
+        is_crusher_enchant = is_crusher_enchant or false
+    }
+    setmetatable(instance, Gear)
+    return instance
+end
+
+function Gear:getSwiftTraitBonus()
+    
+  
+  
+  local swiftTraitBonuses = {
+        Normal = 0.03,
+        Fine = 0.04,
+        Superior = 0.05,
+        Epic = 0.06,
+        Legendary = 0.07
+    }
+    return swiftTraitBonuses[self.quality] or 0
+end
+
+-- Mundus Stone Class
+MundusStone = 
+{
+  BASE_MUNDUS_VALUES = {
+    ["Apprentice"] = 238,    -- Increases Spell Damage
+    ["Atronach"] = 310,      -- Increases Magicka Recovery
+    ["Lady"] = 2744,         -- Increases Physical and Spell Resistance
+    ["Lord"] = 2225,         -- Increases Maximum Health
+    ["Lover"] = 2744,        -- Increases Physical and Spell Penetration
+    ["Mage"] = 2023,         -- Increases Maximum Magicka
+    ["Ritual"] = 0.08,       -- Increases Healing Effectiveness
+    ["Serpent"] = 310,       -- Increases Stamina Recovery
+    ["Shadow"] = 0.11,       -- Increases Critical Damage and Healing
+    ["Steed"] = 10,          -- Increases Movement Speed and Health Recovery
+    ["Thief"] = 1333,        -- Increases Critical Strike Rating
+    ["Tower"] = 2023,        -- Increases Maximum Stamina
+    ["Warrior"] = 238        -- Increases Weapon Damage
+},
+
+DIVINES_GEAR_QUAL_BONUS = {
+    Normal = 0.051,
+    Fine = 0.061,
+    Superior = 0.071,
+    Epic = 0.081,
+    Legendary = 0.091
+}
+}
+MundusStone.__index = MundusStone
+MundusStone.__tostring = function(self)
+    return self.name
+end
+
+
+function MundusStone:new(name, effect, divinesBonus)
+    local instance = {
+        name = name,
+        effect = effect,
+        divinesBonus = divinesBonus or 0
+    }
+    setmetatable(instance, MundusStone)
+    return instance
+
+end
+
+function MundusStone:getTotalEffectWithDivines(gearQuality)
+  local baseEffect = MundusStone.BASE_MUNDUS_VALUES[self.name] or 0
+  local gearQualityBonus = MundusStone.DIVINES_GEAR_QUAL_BONUS[gearQuality] or 0
+  local totalEffect = (baseEffect * (1 + gearQualityBonus)) + self.divinesBonus
+  return totalEffect
+end
+-- Player Class
+Player = {
+  Stats = {
+    Health = 0,
+    Magicka = 0,
+    Stamina = 0,
+    WeaponDamage = 0,
+    SpellDamage = 0,
+    WeaponCritical = 0,
+    SpellCritical = 0,
+    WeaponPenetration = 0,
+    SpellPenetration = 0,
+    WeaponCriticalDamage = 0,
+    SpellCriticalDamage = 0,
+    MovementSpeed = 0,
+    MountedSpeed = 0
+  },
+  MundusStones = {},
+  ChampionPoints = nil
+}
+
+function Player:resetStats()
+    self.Stats.Health = 0
+    self.Stats.Magicka = 0
+    self.Stats.Stamina = 0
+    self.Stats.WeaponDamage = 0
+    self.Stats.SpellDamage = 0
+    self.Stats.WeaponCritical = 0
+    self.Stats.SpellCritical = 0
+    self.Stats.WeaponPenetration = 0
+    self.Stats.SpellPenetration = 0
+    self.Stats.WeaponCriticalDamage = 0
+    self.Stats.SpellCriticalDamage = 0
+    self.Stats.MovementSpeed = 0
+    self.Stats.MountedSpeed = 0
+end
+
+function Player:equipGear(gear)
+
+    if gear.trait == "swift" then
+        self.movementSpeed = self.movementSpeed + gear:getSwiftTraitBonus()
+    elseif gear.trait == "divines" then
+      for _, mundusStone in ipairs(self.MundusStones) do
+        self.total_divines_multiplier = self.total_divines_multiplier + mundusStone:getTotalEffectWithDivines(gear.quality)
+      end
+    end
+
+    if gear.name == "Ring of the Wild Hunt" then
+        
+    end
+end
+
+function Player:calculateMovementSpeed()
+    local movementSpeed = BASE_MOVEMENT_SPEED
+    if self.wearing.rotw then
+      if InCombat() then
+        movementSpeed = movementSpeed + 15
+      else
+        movementSpeed = movementSpeed + 40
+      end
+    end
+    return movementSpeed
+end
+
+
+function Player:getBagSize(id)
+local bagId = id or BAG_WORN
+local bagSize = GetBagSize(bagId)
+return bagSize
+end
+
+
 local debuffs = {
     crit = {
       [142610] = 5, -- Flame Weakness

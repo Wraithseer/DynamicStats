@@ -16,8 +16,7 @@
 
 - **Movement Speed**: Calculated from different sources including original movement speed, sprint speed, Major/Minor Expedition, Bosmer Passive, Steed Mundus, Ring of the Wild Hunt, Swift Trait, Steed's Blessing (CP Slottable), Celerity (CP slottable). Colored red if over 200% global cap. When mounted, replaces with mount speed, calculated similarly but with different components. Assumes global cap of 300% is unreachable.
 
-## Planned Fixes and Features:
-
+## Planned Fixes and Features:z
 1. Change format of capped values (CHD, non-mounted MS) to display value over cap (e.g., red 125%+6%).
 2. Improve detection for when player stops sprinting (currently no trigger, stats update on other events).
 3. Fix penetration values for Alkosh, Sundering enchant (add floating values if possible, improve detection if not) - currently delivers 4000 for Alkosh and max 2108 for sundering.

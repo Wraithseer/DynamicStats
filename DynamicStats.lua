@@ -1,26 +1,6 @@
 local addoncodename = 'DynamicStats'
 
-local isPlayerInCombat = false
-local SteedCP = false
-local WildHuntOn = false
-local sv
-local critDamage = 0
-local cpCritMod = 0
-local cpSpeedMod = 0
-local buffSpeedMod = 0
-local sprintSpeedMod = 0
-local mountsprintSpeedMod = 0
-local mountTraining = 0
-local mountMultiplier = 1
-local mountMultiplierCP = 0
-local wildhuntSpeed = 0
-local swiftSpeed = 0
-local steedSpeed = 0
-local debuffCritMod = 0
-local ccoef = 219.1
-local lastCallTime = 0
-local cooldown = 300
-local debuffPenMod = 0
+
 local CRITCAP = "FFFFFF"
 local PRCAP = "FFFFFF"
 local SRCAP = "FFFFFF"
@@ -50,6 +30,15 @@ local playerBuffsSpeed = {
 local current_target = nil
 local target_cache = {}
 
+local function calculateMovementSpeed()
+
+  return BASE_MOVEMENT_SPEED + cpSpeedMod + buffSpeedMod + sprintSpeedMod + wildhuntSpeed + swiftSpeed + steedSpeed
+end
+
+local function calculateMountedSpeed()
+  return (BASE_MOUNTED_SPEED + mountTraining + mountsprintSpeedMod) * (mountMultiplier + mountMultiplierCP)
+end
+
 local function DynamicStats_UpdateUI()
   local added_crit = 0
   local added_pen = 0
@@ -58,7 +47,7 @@ local function DynamicStats_UpdateUI()
       added_pen = current_target.added_penetration
   end
 
-  local totalCritDamage = 50 + critDamage + cpCritMod + added_crit
+  local totalCritDamage = BASE_CRITICAL_DAMAGE + critDamage + cpCritMod + added_crit
   local weaponPower = GetPlayerStat(STAT_POWER, STAT_BONUS_OPTION_APPLY_BONUS)
   local spellPower = GetPlayerStat(STAT_SPELL_POWER, STAT_BONUS_OPTION_APPLY_BONUS)
   local weaponDamage = zo_max(weaponPower, spellPower)
@@ -67,9 +56,10 @@ local function DynamicStats_UpdateUI()
   local physicalResistance = GetPlayerStat(STAT_PHYSICAL_RESIST, STAT_BONUS_OPTION_APPLY_BONUS)
   local spellResistance = GetPlayerStat(STAT_SPELL_RESIST, STAT_BONUS_OPTION_APPLY_BONUS)
   local armorPenetration = GetPlayerStat(STAT_PHYSICAL_PENETRATION) + added_pen
-  local movementSpeed = 100 + cpSpeedMod + buffSpeedMod + sprintSpeedMod + wildhuntSpeed + swiftSpeed + steedSpeed
-  local mountedSpeed = (115 + mountTraining + mountsprintSpeedMod) * (mountMultiplier + mountMultiplierCP)
+  local movementSpeed = calculateMovementSpeed()
+  local mountedSpeed = calculateMountedSpeed()
   local playerMounted = IsMounted()
+
   if isPlayerInCombat == true and SteedCP == true then
     movementSpeed = movementSpeed - 20
   end
@@ -143,34 +133,15 @@ local function OnStatsUpdated(eventCode, ...)
       sprintSpeedMod = 0
       mountsprintSpeedMod = 0
     end
+
     local wildHuntName = 'Ring of the Wild Hunt'
     local divines = 0
 
-    swiftSpeed = 0
-    WildHuntOn = false
-    wildhuntSpeed = 0
-    local bagId = BAG_WORN                 -- Bag ID for equipped gear
-    local numSlots = GetBagSize(bagId)     -- Get the number of slots in the equipped gear bag
-    for slotIndex = 0, numSlots - 1 do
+    for slotIndex = 0, Player:getBagSize() - 1 do
       local itemName = GetItemName(bagId, slotIndex)
       local itemTrait = GetItemTrait(bagId, slotIndex)
-      if itemName == wildHuntName then
-        WildHuntOn = true
-        wildhuntSpeed = 45
-      end
-      if itemTrait == 28 then
-        swiftSpeed = swiftSpeed + 7
-      end
-      if itemTrait == 18 then
-        divines = divines + 1
-      end
-    end
-    if divines > 0 then
-      divinesSteed = divines - 1
-    end
-    steedSpeed = 0
+      Player:equipGear(Gear:new(slot,name, trait, quality, is_crusher_enchant))
     DynamicStats_UpdateUI()
-    lastCallTime = currentTimecrit
   end
 end
 
