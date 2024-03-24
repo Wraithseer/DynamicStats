@@ -17,6 +17,7 @@ function Player:new()
         ARMOR_CAP = 33000,
         MOVEMENT_CAP = 200,
         CRIT_COEFFICIENT = 219.1,
+        MOUNT_SPRINT_SPEED = 30,
         Stats = {
             ["Damage"] = 0,
             ["CriticalChanceWep"] = 0,
@@ -95,7 +96,8 @@ function Player:calculateMovementSpeed()
     end
     if self.Flags.IS_SPRINTING then
         local sprintMultiplier = select(3,GetAdvancedStatValue(ADVANCED_STAT_DISPLAY_TYPE_SPRINT_SPEED)) 
-        self.Stats["MovementSpeed"] =  self.Stats["MovementSpeed"] + sprintMultiplier -100                                                                           
+        self.Stats["MovementSpeed"] =  self.Stats["MovementSpeed"] + sprintMultiplier - 100
+        self.Stats["MountedSpeed"] = self.Stats["MountedSpeed"] + self.MOUNT_SPRINT_SPEED
     end
 
    --TODO: implement if self.Flags.IS_CROUCHED then
@@ -133,7 +135,7 @@ function Player:ApplyBuffsToStats()
             self.Stats["MovementSpeed"] = self.Stats["MovementSpeed"] + self.Buffs.Speed[abilityIdS]
         end
         if self.Buffs.MountSpeed[abilityIdS] then
-            self.Stats["MountedSpeed"] = self.Stats["MountedSpeed"] * self.Buffs.MountSpeed[abilityIdS]
+            self.Stats["MountedSpeed"] = self.Stats["MountedSpeed"] * (1 + self.Buffs.MountSpeed[abilityIdS])
         end
         if abilityIdS == STEED_MUNDUS_ID then
             self.SteedMundus = true
@@ -145,6 +147,8 @@ function Player:UpdateStats()
         self.Stats["CriticalDamage"] = self.Stats["CriticalDamage"] + self.Target.added_crit
         self.Stats["ArmorPenetration"] = self.Stats["ArmorPenetration"] + self.Target.added_penetration
     end
+    local ridingLessonBonus= select(5,GetRidingStats("player"))
+    self.Stats["MountedSpeed"] = self.Stats["MountedSpeed"] + ridingLessonBonus
     self:calculateMovementSpeed()
     self:calculateCritDmg()
     if self.SteedMundus then
