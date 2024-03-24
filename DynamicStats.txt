@@ -9,6 +9,9 @@
 # The Elder Scrolls® and related logos are registered trademarks or trademarks of
 # ZeniMax Media Inc. in the United States and/or other countries. All rights reserved.
 
-CombatData.lua
+DynamicStats_Gear.lua
+DynamicStats_Player.lua
+DynamicStats_Target.lua
+DynamicStats_UI.lua
 DynamicStats.lua
 DynamicStats.xml
