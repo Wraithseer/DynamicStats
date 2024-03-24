@@ -1,6 +1,6 @@
 ## AddOnVersion: 1
 ## APIVersion: 101040
-## Author: Wraithseer
+## Author: Mantas130 & Wraithseer
 ## Title: Dynamic Stats
 ## SavedVariables: DynamicStatsSV
 ## Version: 1.0.2
