@@ -38,11 +38,11 @@ end
 
 function Gear:getSwiftTraitBonus(quality)
     local swiftTraitBonuses = {
-        [1] = 0.03,
-        [2] = 0.04,
-        [3] = 0.05,
-        [4] = 0.06,
-        [5] = 0.07
+        [1] = 3,
+        [2] = 4,
+        [3] = 5,
+        [4] = 6,
+        [5] = 7
     }
     return swiftTraitBonuses[self.quality] or 0
 end

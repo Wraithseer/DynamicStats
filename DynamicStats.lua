@@ -6,7 +6,7 @@ local target_cache = {}
 local TARGET_CACHE_MAX_SIZE = 15
 
 local function OnStatsUpdated(...)
-  player:UpdateStats()
+  player:Update()
   DynamicStats_UpdateUI()
 end
 
@@ -62,7 +62,7 @@ local function OnCombatStateChanged(eventCode, inCombat)
 end
 
 local function OnPlayerActivated(eventCode, initial)
-  player:UpdateStats()
+  player:Update()
   player:updateChampionPoints()
   DynamicStats_UpdateUI()
 end
@@ -86,19 +86,14 @@ local function DynamicStatsInitialize()
   HUD_UI_SCENE:AddFragment(fragment);
 
   EVENT_MANAGER:RegisterForEvent(addoncodename .. 'Reticle', EVENT_RETICLE_TARGET_CHANGED, OnReticleChange)
-  -- True-Sworn Fury
-  EVENT_MANAGER:RegisterForEvent(addoncodename .. 'Health', EVENT_POWER_UPDATE, OnStatsUpdated)
-  EVENT_MANAGER:RegisterForEvent(addoncodename, EVENT_COMBAT_EVENT, OnCombatEvent)
-  EVENT_MANAGER:AddFilterForEvent(addoncodename .. 'Hidden', EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, 20309,
-    REGISTER_FILTER_TARGET_COMBAT_UNIT_TYPE, COMBAT_UNIT_TYPE_PLAYER)
 
+  EVENT_MANAGER:RegisterForEvent(addoncodename .. 'Health', EVENT_POWER_UPDATE, OnStatsUpdated)
   EVENT_MANAGER:RegisterForEvent(addoncodename .. 'Gear', EVENT_INVENTORY_SINGLE_SLOT_UPDATE, OnStatsUpdated)
-  -- EVENT_MANAGER:AddFilterForEvent(addoncodename .. 'Gear', EVENT_INVENTORY_SINGLE_SLOT_UPDATE, REGISTER_FILTER_BAG_ID,
-  --   BAG_WORN, REGISTER_FILTER_INVENTORY_UPDATE_REASON, INVENTORY_UPDATE_REASON_DEFAULT)
-  -- Nightblade's Hemorrhage, Templar's Piercing Spear and Warden's Advanced Species passives require skill slotted
   EVENT_MANAGER:RegisterForEvent(addoncodename .. 'Skill', EVENT_ACTION_SLOT_UPDATED, OnStatsUpdated)
   EVENT_MANAGER:RegisterForEvent(addoncodename .. 'AllSkills', EVENT_ACTION_SLOTS_ALL_HOTBARS_UPDATED, OnStatsUpdated)
   EVENT_MANAGER:RegisterForEvent(addoncodename .. 'Hotbar', EVENT_ACTION_SLOTS_ACTIVE_HOTBAR_UPDATED, OnStatsUpdated)
+
+  EVENT_MANAGER:RegisterForEvent(addoncodename .. 'Combat', EVENT_COMBAT_EVENT, OnCombatEvent)
   EVENT_MANAGER:RegisterForEvent(addoncodename .. 'CPChanged', EVENT_CHAMPION_PURCHASE_RESULT, OnCPChanged)
   EVENT_MANAGER:RegisterForEvent(addoncodename .. 'CombatState', EVENT_PLAYER_COMBAT_STATE, OnCombatStateChanged)
   EVENT_MANAGER:RegisterForEvent(addoncodename .. 'PlayerActivated', EVENT_PLAYER_ACTIVATED, OnPlayerActivated)
