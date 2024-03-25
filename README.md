@@ -26,7 +26,7 @@
 5. Improve calculation of Swift traits to account for non-gold items (currently adds flat 7% per detected swift trait).
 6. Improve calculation of Divine trait of Steed mundus to account for non-gold items (currently adds flat 1% for every detected divine item beyond the first).
 
-**Planned features afterwards**
+**Planned features afterwards:**
 1. Fix penetration values for Alkosh, Sundering enchant (add floating values if possible, improve detection if not) - currently delivers 4000 for Alkosh and max 2108 for sundering.
 2. Fix Force of Nature CP not properly recognizing Diseased, Sundered, Overcharged, or Concussion (hidden buffs, see CMX).
 3. If possible, move sprint event from SHIFT press to a better detection method or make it configurable.
