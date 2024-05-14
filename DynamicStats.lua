@@ -3,7 +3,7 @@ local sv
 local player = Player:new()
 
 local target_cache = {}
-local TARGET_CACHE_MAX_SIZE = 15
+local TARGET_CACHE_MAX_SIZE = 16
 
 local function OnStatsUpdated(...)
   player:Update()
@@ -24,6 +24,7 @@ local function OnReticleChange(...)
   local should_update = false
   if DoesUnitExist('reticleover') and not IsUnitPlayer('reticleover') and IsUnitAttackable('reticleover') then
     local unitName = zo_strformat("<<t:1>>", GetUnitName('reticleover'))
+    d("Target: "..unitName)
     if not target_cache[unitName] then
       player.Target = Target:new(unitName)
       table.insert(target_cache, player.Target)
