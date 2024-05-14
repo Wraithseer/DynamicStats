@@ -106,12 +106,12 @@ local function DynamicStats_UpdateUI()
     else
       CRITCAP = "FFFFFF"
     end
-    if physicalResistance > 33000 then
+    if physicalResistance > 33100 then
       PRCAP = "FFDC00"
     else
       PRCAP = "FFFFFF"
     end
-    if spellResistance > 33000 then
+    if spellResistance > 33100 then
       SRCAP = "FFDC00"
     else
       SRCAP = "FFFFFF"
