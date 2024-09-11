@@ -1,17 +1,22 @@
 ## AddOnVersion: 1
 ## APIVersion: 101040
-## Author: Mantas130 & Wraithseer
+## Author: Mantas & Wraithseer
 ## Title: Dynamic Stats
 ## SavedVariables: DynamicStatsSV
-## Version: 1.0.2
+## Version: 1.1
 
 # This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates.
 # The Elder Scrolls® and related logos are registered trademarks or trademarks of
 # ZeniMax Media Inc. in the United States and/or other countries. All rights reserved.
 
-DynamicStats_Gear.lua
-DynamicStats_Player.lua
-DynamicStats_Target.lua
-DynamicStats_UI.lua
 DynamicStats.lua
 DynamicStats.xml
+
+DynamicStats_Buffs.lua
+DynamicStats_ChampionPoints.lua
+DynamicStats_Flags.lua
+DynamicStats_Gear.lua
+DynamicStats_Player.lua
+DynamicStats_Stats.lua
+DynamicStats_Target.lua
+DynamicStats_UI.lua
