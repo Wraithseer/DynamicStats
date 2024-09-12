@@ -8,6 +8,7 @@ local critDamage = 0
 local cpCritMod = 0
 local cpSpeedMod = 0
 local buffSpeedMod = 0
+local divinesSteed = 0
 local sprintSpeedMod = 0
 local mountsprintSpeedMod = 0
 local mountTraining = 0
@@ -136,6 +137,7 @@ local function OnStatsUpdated(eventCode, ...)
     if currentTimecrit - lastCallTime >= cooldown then
     _, _, critDamage = GetAdvancedStatValue(ADVANCED_STAT_DISPLAY_TYPE_CRITICAL_DAMAGE)
     buffSpeedMod = 0
+    steedSpeed = 0
     mountMultiplier = 1
     for i = 1, GetNumBuffs('player') do
       local _, _, _, _, _, _, _, _, _, _, abilityIdS = GetUnitBuffInfo('player', i)
@@ -145,10 +147,8 @@ local function OnStatsUpdated(eventCode, ...)
       if abilityIdS == 63569 then
           mountMultiplier = mountMultiplier + 0.3
       end
-      for j = 2, 14 do -- munduesStones length
-        if abilityIdS == 13977 then
+      if abilityIdS == 13977 then
           steedSpeed = 10 + divinesSteed
-        end
       end
     end
     if IsShiftKeyDown() then
@@ -163,7 +163,6 @@ local function OnStatsUpdated(eventCode, ...)
     end
     local wildHuntName = 'Ring of the Wild Hunt'
     local divines = 0
-    local divinesSteed = 0
     swiftSpeed = 0
     WildHuntOn = false
     wildhuntSpeed = 0
@@ -183,7 +182,6 @@ local function OnStatsUpdated(eventCode, ...)
     end
     if divines > 0 then
     divinesSteed = divines - 1 end
-    steedSpeed = 0
     DynamicStats_UpdateUI()
     lastCallTime = currentTimecrit
     end
