@@ -16,17 +16,17 @@
 
 - **Movement Speed**: Calculated from different sources including original movement speed, sprint speed, Major/Minor Expedition, Bosmer Passive, Steed Mundus, Ring of the Wild Hunt, Swift Trait, Steed's Blessing (CP Slottable), Celerity (CP slottable). Colored red if over 200% global cap. When mounted, replaces with mount speed, calculated similarly but with different components. Assumes global cap of 300% is unreachable.
 
-## Planned Fixes and Features:z
-1. Change format of capped values (CHD, non-mounted MS) to display value over cap (e.g., red 125%+6%).
-2. Improve detection for when player stops sprinting (currently no trigger, stats update on other events).
-3. Fix penetration values for Alkosh, Sundering enchant (add floating values if possible, improve detection if not) - currently delivers 4000 for Alkosh and max 2108 for sundering.
-4. Fix Force of Nature CP not properly recognizing Diseased, Sundered, Overcharged, or Concussion (hidden buffs, see CMX).
-5. Improve calculation of Swift traits to account for non-gold items (currently adds flat 7% per detected swift trait).
-6. Improve calculation of divine trait of Steed mundus to account for non-gold items (currently adds flat 1% for every detected divine item beyond the first).
-7. If possible, move sprint event from SHIFT press to a better detection method or make it configurable.
-8. Add support for different levels of included CP stars (possibly not needed, but not the most extreme edge case).
-9. Change functions and methods to reduce unnecessary calls and updates.
-10. Improve visual design.
-11. Add settings for turning stat lines on and off.
-12. Add automatic PvP mode on battle spirit acquisition, removing cap information from penetration and armor and recalculating player penetration debuffs.
-13. Refactor functions and calls to improve code quality.
+# Planned Fixes and Features
+- [ ] Change format of capped values (CHD, non-mounted MS) to display value over cap (e.g., red 125%+6%)
+- [ ] Improve detection for when player stops sprinting (currently no trigger, stats update on other events)
+- [ ] Fix penetration values for Alkosh, Sundering enchant (add floating values if possible, improve detection if not) - currently delivers 4000 for Alkosh and max 2108 for sundering
+- [ ] Fix Force of Nature CP not properly recognizing Diseased, Sundered, Overcharged, or Concussion (hidden buffs, see CMX)
+- [x] Improve calculation of Swift traits to account for non-gold items (currently adds flat 7% per detected swift trait)
+- [x] Improve calculation of divine trait of Steed mundus to account for non-gold items (currently adds flat 1% for every detected divine item beyond the first)
+- [ ] If possible, move sprint event from SHIFT press to a better detection method or make it configurable
+- [ ] Add support for different levels of included CP stars (possibly not needed, but not the most extreme edge case)
+- [ ] Change functions and methods to reduce unnecessary calls and updates
+- [ ] Improve visual design
+- [ ] Add settings for turning stat lines on and off
+- [ ] Add automatic PvP mode on battle spirit acquisition, removing cap information from penetration and armor and recalculating player penetration debuffs
+- [x] Refactor functions and calls to improve code quality

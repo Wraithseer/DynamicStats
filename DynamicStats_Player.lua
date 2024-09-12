@@ -8,7 +8,6 @@ Player = {
     Modifiers = {
         AddedCrit = 0,
         AddedPenetration = 0,
-        DivinesMultiplier = 0
     },
     Target = nil,
 }
@@ -26,26 +25,31 @@ function Player:New()
     return instance
 end
 
+
+
 function Player:Update()
     self.Stats:Update()
     self.Flags:Update()
     self.Buffs:Update()
     self.ChampionPoints:Update()
     self.Gear:Update()
-
-    self.Flags.IsWearingRotw = self.Gear.IsWearingRotw
-
+    
     self:CalculateMovementSpeed()
     self:CalculateMountedSpeed()
     self:CalculateCriticalDamage()
     self:CalculateAddedPenetration()
 end
 
+
 function Player:CalculateMovementSpeed()
     local speed = self.Stats.Current["MovementSpeed"]
     
-    if self.Flags.IsWearingRotw then
-        speed = speed + (self.Flags.InCombat and 15 or 45)
+    if self.Gear.IsWearingRotw then
+        if self.Flags.InCombat then
+            speed = speed + 15
+        else
+            speed = speed + 45
+        end
     end
     
     if self.Flags.IsSprinting then
@@ -66,9 +70,11 @@ function Player:CalculateMovementSpeed()
     end
 
     if self.SteedMundus then
-        local effect = 10 * (1 + self.Modifiers.DivinesMultiplier)
+        local effect = 10 * (1 + self.Gear.DivinesBonus)
         speed = speed + effect
     end
+
+    speed = speed + self.Gear.SwiftBonus
 
     self.Stats.Current["MovementSpeed"] = speed
 end

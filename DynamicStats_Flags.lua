@@ -1,7 +1,6 @@
 Flags = {
     InCombat = false,
-    IsSprinting = false,
-    IsWearingRotw = false
+    IsSprinting = false
 }
 
 function Flags:New()

@@ -48,17 +48,30 @@ function Gear:GetSwiftTraitBonus()
     return swift_trait_bonuses[self.Quality] or 0
 end
 
+function Gear:GetDivinesBonus()
+    local divines_bonus = {
+        [1] = 0.051,
+        [2] = 0.061,
+        [3] = 0.071,
+        [4] = 0.081,
+        [5] = 0.091
+    }
+    return divines_bonus[self.Quality] or 0
+end
+
 PlayerGear = {
     Cache = {},
     CACHE_SIZE = 6,
-    IsWearingRotw = false
+    IsWearingRotw = false,
+    DivinesBonus = 0,
+    SwiftBonus = 0
 }
 
 function PlayerGear:New()
-    local o = {}
-    setmetatable(o, self)
+    local instance = {}
+    setmetatable(instance, self)
     self.__index = self
-    return o
+    return instance
 end
 
 function PlayerGear:Update()
@@ -72,7 +85,7 @@ function PlayerGear:Update()
         if not self.Cache[item_key] then
             self.Cache[item_key] = Gear:New(slot_index, item_name, item_trait, item_quality)
         end
-        self:EquipGear(self.Cache[item_key])
+        self:OnEquip(self.Cache[item_key])
     end
 
     if #self.Cache > self.CACHE_SIZE then
@@ -80,8 +93,16 @@ function PlayerGear:Update()
     end
 end
 
-function PlayerGear:EquipGear(gear)
-    if gear.Name == "Ring of the Wild Hunt" then
+function PlayerGear:OnEquip(gear)
+    if gear.trait == ITEM_TRAIT_TYPE_ARMOR_DIVINES then
+        self.DivinesBonus = self.DivinesBonus + gear:GetDivinesBonus()
+    end
+
+    if gear.name == "Ring of the Wild Hunt" then
         self.IsWearingRotw = true
+    end
+
+    if gear.trait == ITEM_TRAIT_TYPE_JEWELRY_SWIFT then
+        self.SwiftBonus = self.SwiftBonus + gear:GetSwiftTraitBonus()
     end
 end
